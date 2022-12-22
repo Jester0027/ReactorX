@@ -1,0 +1,25 @@
+{
+    "name": "jester0027/phuck",
+    "autoload": {
+        "psr-4": {
+            "Jester0027\\Phuck\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Jester0027\\Example\\": "examples/",
+            "Jester0027\\Phuck\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jester0027",
+            "email": "paul.ned@outlook.com"
+        }
+    ],
+    "require": {
+        "react/event-loop": "1.3",
+        "react/http": "1.8",
+        "react/socket": "^1.12"
+    }
+}
