@@ -13,4 +13,4 @@ $config = new HttpKernelConfiguration(
 
 $server = HttpKernel::createServer($config);
 
-$server->run();
+//$server->run();

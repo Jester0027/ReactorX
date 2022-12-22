@@ -3,7 +3,7 @@
 namespace Jester0027\Phuck\Attributes;
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
-class Route
+readonly class Route
 {
     public function __construct(
         protected string $method,
@@ -24,7 +24,7 @@ class Route
 }
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
-class HttpGet extends Route
+readonly class HttpGet extends Route
 {
     public function __construct(
         string $path = ''
@@ -35,7 +35,7 @@ class HttpGet extends Route
 }
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
-class HttpPost extends Route
+readonly class HttpPost extends Route
 {
     public function __construct(
         string $path = ''
@@ -46,7 +46,7 @@ class HttpPost extends Route
 }
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
-class HttpPut extends Route
+readonly class HttpPut extends Route
 {
     public function __construct(
         string $path = ''
@@ -57,7 +57,7 @@ class HttpPut extends Route
 }
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
-class HttpPatch extends Route
+readonly class HttpPatch extends Route
 {
     public function __construct(
         string $path = ''
@@ -68,7 +68,7 @@ class HttpPatch extends Route
 }
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
-class HttpDelete extends Route
+readonly class HttpDelete extends Route
 {
     public function __construct(
         string $path = ''

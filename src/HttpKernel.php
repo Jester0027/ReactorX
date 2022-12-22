@@ -20,9 +20,6 @@ readonly class HttpKernel
     protected SocketServer $socket;
     protected LoopInterface $loop;
 
-    /**
-     * @throws ReflectionException
-     */
     public static function createServer(HttpKernelConfiguration $configuration = new HttpKernelConfiguration()): self
     {
         return new self($configuration);
@@ -34,16 +31,14 @@ readonly class HttpKernel
         return $this;
     }
 
-    /**
-     * @throws ReflectionException
-     */
     private function __construct(protected HttpKernelConfiguration $configuration)
     {
+        // TODO Add the services to a DI container and separate this from the HttpKernel class
         $classes = $this->scanServices($this->configuration->projectDir);
         var_dump($classes);
-//        TODO Create request handler mapped to http verb attributes
+        // TODO Create request handler mapped to http verb attributes
 //        $this->loop = Loop::get();
-//        $this->server = new HttpServer([$this, 'handleRequest']);
+//        $this->server = new HttpServer([self::class, 'handleRequest']);
 //
 //        $this->socket = new SocketServer("0.0.0.0:$configuration->port", [], $this->loop);
 //        $this->server->listen($this->socket);
@@ -52,29 +47,33 @@ readonly class HttpKernel
 
 trait HttpKernelTrait
 {
+    use PathTrait;
+
     /**
      * @return ReflectionClass[]
-     * @throws ReflectionException
      */
-    public function scanServices(string $directory): array
+    private function scanServices(string $directory): array
     {
         $dir = self::normalizePath($directory);
         $classes = [];
 
-        foreach (new DirectoryIterator($dir) as $file) {
-            if ($file->isDir() && !$file->isDot()) {
-                $classes = [...$classes, ...$this->scanServices($file->getPathname())];
-            } else if ($file->getExtension() !== 'php') {
-                continue;
-            } else {
-                require_once $file->getPathname();
-                $declaredClasses = get_declared_classes();
-                $fileClasses = array_filter($declaredClasses, function ($class) use ($file) {
-                    $reflection = new ReflectionClass($class);
-                    return self::normalizePath($reflection->getFileName()) === self::normalizePath($file->getPathname());
-                });
-                $classes = [...$classes, ...array_map(fn($class) => new ReflectionClass($class), $fileClasses)];
+        try {
+            foreach (new DirectoryIterator($dir) as $file) {
+                if ($file->isDir() && !$file->isDot()) {
+                    $classes = [...$classes, ...self::scanServices($file->getPathname())];
+                } else if ($file->getExtension() !== 'php') {
+                    continue;
+                } else {
+                    require_once $file->getPathname();
+                    $declaredClasses = get_declared_classes();
+                    $fileClasses = array_filter($declaredClasses, function ($class) use ($file) {
+                        $reflection = new ReflectionClass($class);
+                        return self::normalizePath($reflection->getFileName()) === self::normalizePath($file->getPathname());
+                    });
+                    $classes = [...$classes, ...array_map(fn($class) => new ReflectionClass($class), $fileClasses)];
+                }
             }
+        } catch (ReflectionException $e) {
         }
         return [...$classes];
     }
@@ -85,26 +84,15 @@ trait HttpKernelTrait
      */
     private function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
-
         $path = $request->getUri()->getPath();
 
         if ($path === '/items' && $request->getMethod() === 'GET') {
             return new Response(
                 200,
                 ['Content-Type' => 'application/json'],
-                json_encode(["Hello" => "world", "machin" => "truc"])
+                json_encode(["Hello" => "world"])
             );
         }
-        return new Response(405);
-    }
-
-    private static function normalizePath($path)
-    {
-        $path = str_replace('\\', '/', $path);
-        $path = preg_replace('|(?<=.)/+|', '/', $path);
-        if (':' === substr($path, 1, 1)) {
-            $path = ucfirst($path);
-        }
-        return $path;
+        return new Response($request->getMethod() === 'GET' ? 404 : 405);
     }
 }
