@@ -2,19 +2,24 @@
 
 namespace Jester0027\Examples;
 
-use Jester0027\Phuck\Attributes\{ApiController, HttpDelete, HttpGet, HttpPost, HttpPut};
+use Jester0027\Phuck\Attributes\{Controller, HttpDelete, HttpGet, HttpPost, HttpPut};
+use Jester0027\Examples\Services\FooService;
 use React\Http\Message\Response;
 
-#[ApiController('/items')]
+#[Controller('/items')]
 class HomeController
 {
+    public function __construct(private readonly FooService $fooService)
+    {
+    }
+
     #[HttpGet]
     public function getList(): Response
     {
         return new Response(
             200,
             ['Content-Type' => 'application/json'],
-            json_encode(["Hello" => "world"])
+            json_encode($this->fooService->bar())
         );
     }
 

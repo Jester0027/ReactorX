@@ -2,9 +2,9 @@
 
 namespace Jester0027\Examples\Admin;
 
-use Jester0027\Phuck\Attributes\{ApiController};
+use Jester0027\Phuck\Attributes\{Controller};
 
-#[ApiController]
+#[Controller]
 class UsersController
 {
 

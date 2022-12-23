@@ -8,8 +8,10 @@ use Jester0027\Phuck\Attributes\Scope;
 #[Component(Scope::Singleton)]
 final class FooService
 {
-    public function bar(): string
+    public function bar(): array
     {
-        return 'bar';
+        return [
+            "foo" => "bar"
+        ];
     }
 }

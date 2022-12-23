@@ -2,7 +2,6 @@
 
 namespace Jester0027\Phuck\Attributes;
 
-// TODO integrate with a service manager/DI container library
 /**
  * Adds the annotated class to the DI container with the specified scope
  */
