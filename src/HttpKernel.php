@@ -35,7 +35,8 @@ class HttpKernel
 
     private function __construct(protected HttpKernelConfiguration $configuration)
     {
-        $this->classScanner = new ClassScanner($configuration->projectDir);
+        $this->classScanner = new ClassScanner();
+        $this->classScanner->scanDirectory($configuration->projectDir);
         $actions = $this->classScanner->getActionsMappings();
         $container = $this->classScanner->serviceContainer;
         // TODO Create request handler mapped to http verb attributes

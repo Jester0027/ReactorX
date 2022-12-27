@@ -37,11 +37,9 @@ final class ClassScanner
      */
     private array $actionsMap = [];
 
-    public function __construct(string $dir)
+    public function __construct()
     {
         $this->serviceContainer = new Container();
-        $classes = $this->scanClasses($dir);
-        $this->mapClasses($classes);
     }
 
     /**
@@ -120,5 +118,11 @@ final class ClassScanner
     public function getComponents(): array
     {
         return $this->components;
+    }
+
+    public function scanDirectory(string $dir): void
+    {
+        $classes = $this->scanClasses($dir);
+        $this->mapClasses($classes);
     }
 }
