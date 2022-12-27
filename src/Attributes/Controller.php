@@ -2,6 +2,8 @@
 
 namespace Jester0027\Phuck\Attributes;
 
+use Jester0027\Phuck\Scope;
+
 /**
  * Declares a class as a controller with a request scoped lifetime in the DI container
  */

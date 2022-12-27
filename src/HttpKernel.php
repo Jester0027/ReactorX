@@ -3,7 +3,6 @@
 namespace Jester0027\Phuck;
 
 use Closure;
-use DI\Container;
 use Psr\Http\Message\ServerRequestInterface;
 use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
@@ -11,14 +10,15 @@ use React\Http\HttpServer;
 use React\Http\Message\Response;
 use React\Socket\SocketServer;
 
+/**
+ * @author Paul N. Etienne <paul.ned@outlook.com>
+ */
 class HttpKernel
 {
-    use HttpKernelTrait;
-
     protected HttpServer $server;
     protected SocketServer $socket;
     protected LoopInterface $loop;
-    protected ClassScanner $classScanner;
+    protected ComponentScanner $classScanner;
 
     protected array $controllers;
 
@@ -35,26 +35,23 @@ class HttpKernel
 
     private function __construct(protected HttpKernelConfiguration $configuration)
     {
-        $this->classScanner = new ClassScanner();
+        $this->classScanner = new ComponentScanner();
         $this->classScanner->scanDirectory($configuration->projectDir);
-        $actions = $this->classScanner->getActionsMappings();
-        $container = $this->classScanner->serviceContainer;
-        // TODO Create request handler mapped to http verb attributes
         $this->loop = Loop::get();
-        $this->server = new HttpServer($this->getRequestHandler($container, $actions));
+        $this->server = new HttpServer($this->getRequestHandler());
 
         $this->socket = new SocketServer("0.0.0.0:$configuration->port", [], $this->loop);
         $this->server->listen($this->socket);
     }
 
     /**
-     * @param Container $container
-     * @param array $actions
      * @return Closure
      */
-    public function getRequestHandler(Container $container, array $actions): Closure
+    public function getRequestHandler(): Closure
     {
-        return function (ServerRequestInterface $request) use ($container, $actions) {
+        return function (ServerRequestInterface $request) {
+            $actions = $this->classScanner->getActionsMappings();
+            $container = $this->classScanner->container;
             $httpVerb = $request->getMethod();
             $path = rtrim($request->getUri()->getPath(), '/');
             $action = $actions[$httpVerb][$path];

@@ -4,6 +4,7 @@ namespace Jester0027\Phuck;
 
 use DI\Container;
 use Jester0027\Phuck\Attributes\Component;
+use Jester0027\Phuck\Attributes\Configuration;
 use Jester0027\Phuck\Attributes\Controller;
 use Jester0027\Phuck\Attributes\Route;
 use ReflectionAttribute;
@@ -11,11 +12,14 @@ use ReflectionClass;
 use ReflectionMethod;
 use function DI\autowire;
 
-final class ClassScanner
+/**
+ * @author Paul N. Etienne <paul.ned@outlook.com>
+ */
+final class ComponentScanner
 {
     use ClassScannerTrait;
 
-    public readonly Container $serviceContainer;
+    public readonly Container $container;
     private array $controllers = [];
     private array $components = [];
     /**
@@ -39,7 +43,7 @@ final class ClassScanner
 
     public function __construct()
     {
-        $this->serviceContainer = new Container();
+        $this->container = new Container();
     }
 
     /**
@@ -54,6 +58,9 @@ final class ClassScanner
                 switch ($attribute->getName()) {
                     case Component::class:
                         $this->registerComponent($class, $attribute);
+                        break;
+                    case Configuration::class:
+                        $this->registerConfiguration($class, $attribute);
                         break;
                     case Controller::class:
                         $this->registerController($class, $attribute);
@@ -101,8 +108,21 @@ final class ClassScanner
     private function registerComponent(ReflectionClass $class, ReflectionAttribute $attribute): void
     {
         // TODO Set the scope of each component
-        $this->serviceContainer->set($class->getName(), autowire($class->getName()));
+        $this->compoentns->set($class->getName(), autowire($class->getName()));
         $this->components[] = $class->getName();
+    }
+
+    private function registerConfiguration(ReflectionClass $class, ReflectionAttribute $attribute): void
+    {
+        $this->registerComponent($class, $attribute);
+        $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
+        $configuration = $this->compoentns->get($class->getName());
+        foreach ($methods as $method) {
+            $componentAttribute = $method->getAttributes(Component::class, ReflectionAttribute::IS_INSTANCEOF)[0];
+            if (isset($componentAttribute)) {
+                // TODO register method return value in DI container
+            }
+        }
     }
 
     public function getControllers(): array

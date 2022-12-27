@@ -7,6 +7,9 @@ use Jester0027\Examples\Services\FooService;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 
+/**
+ * Classes annotated with <code>#[Controller]</code> are picked up by the class scanner, added in the service container and configured as controllers
+ */
 #[Controller('/items')]
 final readonly class HomeController
 {

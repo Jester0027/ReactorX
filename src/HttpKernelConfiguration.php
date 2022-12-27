@@ -2,6 +2,9 @@
 
 namespace Jester0027\Phuck;
 
+/**
+ * @author Paul N. Etienne <paul.ned@outlook.com>
+ */
 readonly class HttpKernelConfiguration
 {
     /**

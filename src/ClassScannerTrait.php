@@ -6,6 +6,9 @@ use DirectoryIterator;
 use ReflectionClass;
 use ReflectionException;
 
+/**
+ * @author Paul N. Etienne <paul.ned@outlook.com>
+ */
 trait ClassScannerTrait
 {
     use PathTrait;
