@@ -4,17 +4,19 @@ namespace Jester0027\Examples;
 
 use Jester0027\Phuck\Attributes\{Controller, HttpDelete, HttpGet, HttpPost, HttpPut};
 use Jester0027\Examples\Services\FooService;
+use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 
 #[Controller('/items')]
-class HomeController
+final readonly class HomeController
 {
-    public function __construct(private readonly FooService $fooService)
+    public function __construct(private FooService $fooService)
     {
+        var_dump("home controller constructed");
     }
 
     #[HttpGet]
-    public function getList(): Response
+    public final function getList(ServerRequestInterface $request): Response
     {
         return new Response(
             200,

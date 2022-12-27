@@ -3,11 +3,15 @@
 namespace Jester0027\Examples\Services;
 
 use Jester0027\Phuck\Attributes\Component;
-use Jester0027\Phuck\Attributes\Scope;
 
-#[Component(Scope::Singleton)]
+#[Component]
 final class FooService
 {
+    public function __construct()
+    {
+        var_dump("foo service constructed");
+    }
+
     public function bar(): array
     {
         return [
