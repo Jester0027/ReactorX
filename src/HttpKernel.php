@@ -3,12 +3,15 @@
 namespace Jester0027\Phuck;
 
 use Closure;
+use DI\DependencyException;
+use DI\NotFoundException;
 use Psr\Http\Message\ServerRequestInterface;
 use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
 use React\Http\HttpServer;
 use React\Http\Message\Response;
 use React\Socket\SocketServer;
+use ReflectionMethod;
 
 /**
  * @author Paul N. Etienne <paul.ned@outlook.com>
@@ -60,9 +63,34 @@ class HttpKernel
             }
             $className = $action[0];
             $actionName = $action[1];
+            $reflectionMethod = new ReflectionMethod($className, $actionName);
+            $parameters = $this->autowireParameters($reflectionMethod, $request);
             $controller = $container->get($className);
-            return $controller->$actionName($request);
+            return $controller->$actionName(...$parameters);
         };
+    }
+
+    /**
+     * Returns an array of the reflected method arguments
+     * @param ReflectionMethod $reflectionMethod
+     * @param ServerRequestInterface $request
+     * @return array
+     */
+    function autowireParameters(ReflectionMethod $reflectionMethod, ServerRequestInterface $request): array
+    {
+        $parameters = [];
+        foreach ($reflectionMethod->getParameters() as $parameter) {
+            $type = $parameter->getType()->getName();
+            try {
+                $parameters[] = match ($type) {
+                    ServerRequestInterface::class => $request,
+                    default => $this->classScanner->container->get($type),
+                };
+            } catch (DependencyException|NotFoundException $e) {
+                // TODO handle the exception
+            }
+        }
+        return $parameters;
     }
 }
 

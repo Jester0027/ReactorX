@@ -108,7 +108,7 @@ final class ComponentScanner
     private function registerComponent(ReflectionClass $class, ReflectionAttribute $attribute): void
     {
         // TODO Set the scope of each component
-        $this->compoentns->set($class->getName(), autowire($class->getName()));
+        $this->container->set($class->getName(), autowire($class->getName()));
         $this->components[] = $class->getName();
     }
 
@@ -116,7 +116,7 @@ final class ComponentScanner
     {
         $this->registerComponent($class, $attribute);
         $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
-        $configuration = $this->compoentns->get($class->getName());
+        $configuration = $this->container->get($class->getName());
         foreach ($methods as $method) {
             $componentAttribute = $method->getAttributes(Component::class, ReflectionAttribute::IS_INSTANCEOF)[0];
             if (isset($componentAttribute)) {

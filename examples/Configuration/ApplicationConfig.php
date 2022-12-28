@@ -2,6 +2,7 @@
 
 namespace Jester0027\Examples\Configuration;
 
+use Jester0027\Examples\Services\FakeCrudService;
 use Jester0027\Examples\Services\SomeService;
 use Jester0027\Examples\Services\SomeServiceInterface;
 use Jester0027\Phuck\Attributes\Component;

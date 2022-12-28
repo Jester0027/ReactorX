@@ -13,24 +13,26 @@ use React\Http\Message\Response;
 #[Controller('/items')]
 final readonly class HomeController
 {
-    public function __construct(private FooService $fooService)
+    public function __construct()
     {
         var_dump("home controller constructed");
     }
 
     #[HttpGet]
-    public final function getList(ServerRequestInterface $request): Response
+    public final function getList(FooService $fooService, ServerRequestInterface $request): Response
     {
+        $queryParams = $request->getQueryParams();
         return new Response(
             200,
             ['Content-Type' => 'application/json'],
-            json_encode($this->fooService->bar())
+            json_encode([...$fooService->bar(), "queryParams" => $queryParams])
         );
     }
 
     #[HttpPost]
-    public function create(): Response
+    public function create(ServerRequestInterface $request): Response
     {
+        var_dump($request->getBody()->getContents());
         return new Response(201);
     }
 
