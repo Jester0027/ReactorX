@@ -1,9 +1,9 @@
 <?php
 
-namespace Jester0027\Examples;
+namespace ReactorX\Examples;
 
-use Jester0027\Phuck\Attributes\{Controller, HttpDelete, HttpGet, HttpPost, HttpPut};
-use Jester0027\Examples\Services\FooService;
+use ReactorX\Attributes\{Controller, HttpDelete, HttpGet, HttpPost, HttpPut};
+use ReactorX\Examples\Services\FooService;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 

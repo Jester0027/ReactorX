@@ -1,6 +1,6 @@
 <?php
 
-namespace Jester0027\Examples\Services;
+namespace ReactorX\Examples\Services;
 
 interface SomeServiceInterface
 {

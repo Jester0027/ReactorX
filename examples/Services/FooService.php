@@ -1,8 +1,8 @@
 <?php
 
-namespace Jester0027\Examples\Services;
+namespace ReactorX\Examples\Services;
 
-use Jester0027\Phuck\Attributes\Component;
+use ReactorX\Attributes\Component;
 
 /**
  * Class scanning picks up this class from the <code>#[Component]</code> attribute and registers it in the service container

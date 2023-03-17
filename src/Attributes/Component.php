@@ -1,8 +1,8 @@
 <?php
 
-namespace Jester0027\Phuck\Attributes;
+namespace ReactorX\Attributes;
 
-use Jester0027\Phuck\Scope;
+use ReactorX\Scope;
 
 /**
  * Adds the annotated class/method return value to the DI container with the specified scope

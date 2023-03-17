@@ -1,6 +1,6 @@
 <?php
 
-namespace Jester0027\Phuck;
+namespace ReactorX;
 
 use DirectoryIterator;
 use ReflectionClass;

@@ -1,12 +1,12 @@
 <?php
 
-namespace Jester0027\Phuck;
+namespace ReactorX;
 
 use DI\Container;
-use Jester0027\Phuck\Attributes\Component;
-use Jester0027\Phuck\Attributes\Configuration;
-use Jester0027\Phuck\Attributes\Controller;
-use Jester0027\Phuck\Attributes\Route;
+use ReactorX\Attributes\Component;
+use ReactorX\Attributes\Configuration;
+use ReactorX\Attributes\Controller;
+use ReactorX\Attributes\Route;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;

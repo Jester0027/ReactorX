@@ -1,7 +1,7 @@
 <?php
 
-use Jester0027\Phuck\HttpKernel;
-use Jester0027\Phuck\HttpKernelConfiguration;
+use ReactorX\HttpKernel;
+use ReactorX\HttpKernelConfiguration;
 
 require_once __DIR__ . '/vendor/autoload.php';
 

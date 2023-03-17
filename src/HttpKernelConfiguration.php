@@ -1,6 +1,6 @@
 <?php
 
-namespace Jester0027\Phuck;
+namespace ReactorX;
 
 /**
  * @author Paul N. Etienne <paul.ned@outlook.com>

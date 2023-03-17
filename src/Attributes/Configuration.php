@@ -1,8 +1,8 @@
 <?php
 
-namespace Jester0027\Phuck\Attributes;
+namespace ReactorX\Attributes;
 
-use Jester0027\Phuck\Scope;
+use ReactorX\Scope;
 
 /**
  * attribute for components instantiated at application startup, mainly responsible for configuration

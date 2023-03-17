@@ -1,12 +1,11 @@
 <?php
 
-namespace Jester0027\Examples\Configuration;
+namespace ReactorX\Examples\Configuration;
 
-use Jester0027\Examples\Services\FakeCrudService;
-use Jester0027\Examples\Services\SomeService;
-use Jester0027\Examples\Services\SomeServiceInterface;
-use Jester0027\Phuck\Attributes\Component;
-use Jester0027\Phuck\Attributes\Configuration;
+use ReactorX\Examples\Services\SomeService;
+use ReactorX\Examples\Services\SomeServiceInterface;
+use ReactorX\Attributes\Component;
+use ReactorX\Attributes\Configuration;
 
 /**
  * This class is instantiated once during startup and is used for configuration.<br>

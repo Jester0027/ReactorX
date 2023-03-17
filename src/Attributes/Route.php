@@ -1,6 +1,6 @@
 <?php
 
-namespace Jester0027\Phuck\Attributes;
+namespace ReactorX\Attributes;
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
 readonly class Route

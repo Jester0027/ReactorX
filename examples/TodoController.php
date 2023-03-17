@@ -1,11 +1,11 @@
 <?php
 
-namespace Jester0027\Examples;
+namespace ReactorX\Examples;
 
-use Jester0027\Examples\Services\FakeCrudService;
-use Jester0027\Phuck\Attributes\Controller;
-use Jester0027\Phuck\Attributes\HttpGet;
-use Jester0027\Phuck\Attributes\HttpPost;
+use ReactorX\Examples\Services\FakeCrudService;
+use ReactorX\Attributes\Controller;
+use ReactorX\Attributes\HttpGet;
+use ReactorX\Attributes\HttpPost;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 

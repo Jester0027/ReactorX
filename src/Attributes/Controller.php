@@ -1,8 +1,8 @@
 <?php
 
-namespace Jester0027\Phuck\Attributes;
+namespace ReactorX\Attributes;
 
-use Jester0027\Phuck\Scope;
+use ReactorX\Scope;
 
 /**
  * Declares a class as a controller with a request scoped lifetime in the DI container

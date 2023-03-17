@@ -1,8 +1,8 @@
 <?php
 
-namespace Jester0027\Examples\Services;
+namespace ReactorX\Examples\Services;
 
-use Jester0027\Phuck\Attributes\Component;
+use ReactorX\Attributes\Component;
 
 #[Component]
 class FakeCrudService
