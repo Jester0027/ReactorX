@@ -2,15 +2,14 @@
 
 namespace ReactorX;
 
-use DI\Container;
 use ReactorX\Attributes\Component;
 use ReactorX\Attributes\Configuration;
 use ReactorX\Attributes\Controller;
 use ReactorX\Attributes\Route;
+use ReactorX\DependencyInjection\Container;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
-use function DI\autowire;
 
 /**
  * @author Paul N. Etienne <paul.ned@outlook.com>
@@ -44,6 +43,27 @@ final class ComponentScanner
     public function __construct()
     {
         $this->container = new Container();
+    }
+
+    public function getControllers(): array
+    {
+        return $this->controllers;
+    }
+
+    public function getActionsMappings(): array
+    {
+        return $this->actionsMap;
+    }
+
+    public function getComponents(): array
+    {
+        return $this->components;
+    }
+
+    public function scanDirectory(string $dir): void
+    {
+        $classes = $this->scanClasses($dir);
+        $this->mapClasses($classes);
     }
 
     /**
@@ -107,8 +127,10 @@ final class ComponentScanner
      */
     private function registerComponent(ReflectionClass $class, ReflectionAttribute $attribute): void
     {
-        // TODO Set the scope of each component
-        $this->container->set($class->getName(), autowire($class->getName()));
+        /** @var Component $componentAttributeInstance */
+        $componentAttributeInstance = $attribute->newInstance();
+        $scope = $componentAttributeInstance->scope;
+        $this->registerServiceWithScope($class->getName(), $scope);
         $this->components[] = $class->getName();
     }
 
@@ -125,24 +147,20 @@ final class ComponentScanner
         }
     }
 
-    public function getControllers(): array
+    private function registerServiceWithScope(string $serviceName, Scope $scope): void
     {
-        return $this->controllers;
-    }
-
-    public function getActionsMappings(): array
-    {
-        return $this->actionsMap;
-    }
-
-    public function getComponents(): array
-    {
-        return $this->components;
-    }
-
-    public function scanDirectory(string $dir): void
-    {
-        $classes = $this->scanClasses($dir);
-        $this->mapClasses($classes);
+        switch ($scope) {
+            case Scope::Singleton:
+                $this->container->singleton($serviceName, fn(Container $container) => $container->createInstance($serviceName));
+                break;
+            case Scope::Request:
+                $this->container->request($serviceName, fn(Container $container) => $container->createInstance($serviceName));
+                break;
+            case Scope::Transient:
+                $this->container->transient($serviceName, fn(Container $container) => $container->createInstance($serviceName));
+                break;
+            default:
+                throw new \RuntimeException("Invalid scope '{$scope}' for service '{$serviceName}'.");
+        }
     }
 }

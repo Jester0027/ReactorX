@@ -3,11 +3,12 @@
 namespace ReactorX\Examples\Services;
 
 use ReactorX\Attributes\Component;
+use ReactorX\Scope;
 
 /**
  * Class scanning picks up this class from the <code>#[Component]</code> attribute and registers it in the service container
  */
-#[Component]
+#[Component(Scope::Singleton)]
 final class FooService
 {
     public function __construct()

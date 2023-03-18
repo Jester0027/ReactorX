@@ -11,6 +11,8 @@ use React\EventLoop\LoopInterface;
 use React\Http\HttpServer;
 use React\Http\Message\Response;
 use React\Socket\SocketServer;
+use ReactorX\DependencyInjection\Container;
+use ReactorX\DependencyInjection\RequestContainer;
 use ReflectionMethod;
 
 /**
@@ -53,8 +55,8 @@ class HttpKernel
     public function getRequestHandler(): Closure
     {
         return function (ServerRequestInterface $request) {
+            $container = $this->classScanner->container->newRequestScopedContainer();
             $actions = $this->classScanner->getActionsMappings();
-            $container = $this->classScanner->container;
             $httpVerb = $request->getMethod();
             $path = rtrim($request->getUri()->getPath(), '/');
             $action = $actions[$httpVerb][$path];
@@ -64,7 +66,7 @@ class HttpKernel
             $className = $action[0];
             $actionName = $action[1];
             $reflectionMethod = new ReflectionMethod($className, $actionName);
-            $parameters = $this->autowireParameters($reflectionMethod, $request);
+            $parameters = $this->autowireParameters($container, $reflectionMethod, $request);
             $controller = $container->get($className);
             return $controller->$actionName(...$parameters);
         };
@@ -72,11 +74,16 @@ class HttpKernel
 
     /**
      * Returns an array of the reflected method arguments
+     * @param Container $container
      * @param ReflectionMethod $reflectionMethod
      * @param ServerRequestInterface $request
      * @return array
      */
-    function autowireParameters(ReflectionMethod $reflectionMethod, ServerRequestInterface $request): array
+    private function autowireParameters(
+        Container              $container,
+        ReflectionMethod       $reflectionMethod,
+        ServerRequestInterface $request
+    ): array
     {
         $parameters = [];
         foreach ($reflectionMethod->getParameters() as $parameter) {
@@ -84,10 +91,12 @@ class HttpKernel
             try {
                 $parameters[] = match ($type) {
                     ServerRequestInterface::class => $request,
-                    default => $this->classScanner->container->get($type),
+                    Container::class => $container,
+                    default => $container->get($type),
                 };
             } catch (DependencyException|NotFoundException $e) {
                 // TODO handle the exception
+                var_dump($e);
             }
         }
         return $parameters;

@@ -3,6 +3,7 @@
 namespace ReactorX\Examples;
 
 use ReactorX\Attributes\{Controller, HttpDelete, HttpGet, HttpPost, HttpPut};
+use ReactorX\DependencyInjection\Container;
 use ReactorX\Examples\Services\FooService;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
@@ -25,26 +26,26 @@ final readonly class HomeController
         return new Response(
             200,
             ['Content-Type' => 'application/json'],
-            json_encode([...$fooService->bar(), "queryParams" => $queryParams])
+            var_export($fooService->bar(), true),
         );
     }
 
-    #[HttpPost]
-    public function create(ServerRequestInterface $request): Response
-    {
-        var_dump($request->getBody()->getContents());
-        return new Response(201);
-    }
-
-    #[HttpPut("{id}")]
-    public function update(): Response
-    {
-        return new Response(204);
-    }
-
-    #[HttpDelete("{id}")]
-    public function delete(): Response
-    {
-        return new Response(204);
-    }
+//    #[HttpPost]
+//    public function create(ServerRequestInterface $request): Response
+//    {
+//        var_dump($request->getBody()->getContents());
+//        return new Response(201);
+//    }
+//
+//    #[HttpPut("{id}")]
+//    public function update(): Response
+//    {
+//        return new Response(204);
+//    }
+//
+//    #[HttpDelete("{id}")]
+//    public function delete(): Response
+//    {
+//        return new Response(204);
+//    }
 }

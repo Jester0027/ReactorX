@@ -12,6 +12,6 @@ readonly class Configuration extends Component
 {
     public function __construct()
     {
-        parent::__construct(Scope::Startup);
+        parent::__construct(Scope::Singleton);
     }
 }
