@@ -2,7 +2,6 @@
 
 namespace ReactorX\Examples\Services;
 
-use ReactorX\Attributes\Component;
 use ReactorX\Attributes\Service;
 
 /**

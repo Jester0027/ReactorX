@@ -3,8 +3,6 @@
 namespace ReactorX;
 
 use Closure;
-use DI\DependencyException;
-use DI\NotFoundException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\EventLoop\Loop;
@@ -13,6 +11,7 @@ use React\Http\HttpServer;
 use React\Http\Message\Response;
 use React\Socket\SocketServer;
 use ReactorX\DependencyInjection\Container;
+use ReactorX\DependencyInjection\DependencyException;
 use ReflectionMethod;
 
 /**
@@ -74,6 +73,7 @@ class HttpKernel
 
     /**
      * Returns an array of the reflected method arguments
+     *
      * @param Container $container
      * @param ReflectionMethod $reflectionMethod
      * @param ServerRequestInterface $request
@@ -94,7 +94,7 @@ class HttpKernel
                     ContainerInterface::class => $container,
                     default => $container->get($type),
                 };
-            } catch (DependencyException|NotFoundException $e) {
+            } catch (DependencyException $e) {
                 // TODO handle the exception
                 var_dump($e);
             }

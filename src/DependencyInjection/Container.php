@@ -84,7 +84,7 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @throws ReflectionException
+     * @throws ReflectionException|DependencyException
      */
     public function createInstance(string $className)
     {
@@ -100,6 +100,7 @@ class Container implements ContainerInterface
      * @param string $id
      * @return mixed
      * @throws RuntimeException
+     * @throws DependencyException
      */
     public function get(string $id): mixed
     {
@@ -118,7 +119,7 @@ class Container implements ContainerInterface
             return $this->transientDefinitions[$id]($this);
         }
 
-        throw new \RuntimeException("Service '{$id}' not found.");
+        throw new DependencyNotFoundException($id);
     }
 
     /**
@@ -158,6 +159,7 @@ class Container implements ContainerInterface
      *
      * @param ReflectionClass $class
      * @return array An array of resolved dependencies
+     * @throws DependencyException
      */
     protected function resolveDependencies(ReflectionClass $class): array
     {
@@ -178,6 +180,7 @@ class Container implements ContainerInterface
      *
      * @param ReflectionParameter $parameter
      * @return mixed The resolved dependency
+     * @throws DependencyException
      */
     protected function resolveDependency(ReflectionParameter $parameter): mixed
     {
@@ -188,7 +191,7 @@ class Container implements ContainerInterface
                 return $parameter->getDefaultValue();
             }
 
-            throw new \RuntimeException("Unable to resolve the '{$parameter->getName()}' parameter.");
+            throw new DependencyException("Unable to resolve the '{$parameter->getName()}' parameter.");
         }
 
         return $this->get($dependencyClass->getName());

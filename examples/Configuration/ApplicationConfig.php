@@ -5,7 +5,10 @@ namespace ReactorX\Examples\Configuration;
 use ReactorX\Attributes\Component;
 use ReactorX\Attributes\Configuration;
 use ReactorX\DependencyInjection\Scope;
-use ReactorX\Examples\Services\SomeServiceInterface;
+use ReactorX\Examples\Services\ConfigurationInterface;
+use ReactorX\Examples\Services\FooService;
+use ReactorX\Examples\Services\BogusPasswordHasher;
+use ReactorX\Examples\Services\PasswordHasherInterface;
 
 /**
  * This class is instantiated once during startup and is used for configuration.<br>
@@ -14,6 +17,10 @@ use ReactorX\Examples\Services\SomeServiceInterface;
 #[Configuration]
 final class ApplicationConfig
 {
+    public function __construct(private readonly FooService $fooService)
+    {
+    }
+
     /**
      * This method registers the <code>SomeServiceInterface<code> in the service container with the return value of the method as the implementation.<br><br>
      *
@@ -32,14 +39,28 @@ final class ApplicationConfig
      * }
      * </code>
      */
-    #[Component(Scope::Transient)]
-    public function configureSomeService(): SomeServiceInterface
+    #[Component(Scope::Singleton)]
+    public function setupConfiguration(): ConfigurationInterface
     {
-        return new class implements SomeServiceInterface {
-            public function doStuff(): string
+        return new class($this->fooService) implements ConfigurationInterface {
+            public function __construct(private readonly FooService $fooService)
             {
-                return 'Foo Bar';
+                var_dump("configuration service constructed");
+            }
+
+            public function getConfiguration(): array
+            {
+                return [
+                    'connection_string' => "sqlite:./data.sqlite",
+                    'foo_service' => $this->fooService->bar()
+                ];
             }
         };
+    }
+
+    #[Component]
+    public function setupPasswordHasher(): PasswordHasherInterface
+    {
+        return new BogusPasswordHasher();
     }
 }

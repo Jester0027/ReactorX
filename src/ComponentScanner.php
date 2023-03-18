@@ -42,6 +42,11 @@ final class ComponentScanner
      */
     private array $actionsMap = [];
 
+    /**
+     * @var array<ReflectionClass>
+     */
+    private array $configurationClasses = [];
+
     public function __construct()
     {
         $this->container = new Container();
@@ -66,6 +71,7 @@ final class ComponentScanner
     {
         $classes = $this->scanClasses($dir);
         $this->mapClasses($classes);
+        $this->setupConfiguration();
     }
 
     /**
@@ -95,6 +101,7 @@ final class ComponentScanner
 
     /**
      * Configures #[Controller] annotated classes and adds them to the DI container
+     *
      * @param ReflectionClass $class
      * @param ReflectionAttribute<Controller> $attribute
      * @return void
@@ -103,7 +110,6 @@ final class ComponentScanner
     {
         $this->registerComponent($class, $attribute);
         $this->controllers[] = $class->getName();
-
         $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
         $controllerAttribute = $class->getAttributes(Controller::class, ReflectionAttribute::IS_INSTANCEOF)[0];
         /** @var Controller $controllerAttributeInstance */
@@ -124,6 +130,7 @@ final class ComponentScanner
 
     /**
      * Adds any #[Component] annotated class to the DI container
+     *
      * @param ReflectionClass $class
      * @param ReflectionAttribute<Component> $attribute
      * @return void
@@ -140,30 +147,56 @@ final class ComponentScanner
     private function registerConfiguration(ReflectionClass $class, ReflectionAttribute $attribute): void
     {
         $this->registerComponent($class, $attribute);
-        $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
-        $configuration = $this->container->get($class->getName());
-        foreach ($methods as $method) {
-            $componentAttribute = $method->getAttributes(Component::class, ReflectionAttribute::IS_INSTANCEOF)[0];
-            if (isset($componentAttribute)) {
-                // TODO register method return value in DI container
-            }
-        }
+        $this->configurationClasses[] = $class;
     }
 
-    private function registerServiceWithScope(string $serviceName, Scope $scope): void
+    /**
+     * @param string $serviceName
+     * @param Scope $scope
+     * @param callable|null $factory
+     * @return void
+     */
+    private function registerServiceWithScope(string $serviceName, Scope $scope, ?callable $factory = null): void
     {
+        $factory ??= fn(Container $container) => $container->createInstance($serviceName);
         switch ($scope) {
             case Scope::Singleton:
-                $this->container->singleton($serviceName, fn(Container $container) => $container->createInstance($serviceName));
+                $this->container->singleton($serviceName, $factory);
                 break;
             case Scope::Request:
-                $this->container->request($serviceName, fn(Container $container) => $container->createInstance($serviceName));
+                $this->container->request($serviceName, $factory);
                 break;
             case Scope::Transient:
-                $this->container->transient($serviceName, fn(Container $container) => $container->createInstance($serviceName));
+                $this->container->transient($serviceName, $factory);
                 break;
             default:
                 throw new \RuntimeException("Invalid scope '{$scope->value}' for service '{$serviceName}'.");
         }
+    }
+
+    /**
+     * @return void
+     */
+    public function setupConfiguration(): void
+    {
+        foreach ($this->configurationClasses as $configurationClass) {
+            $methods = $configurationClass->getMethods(ReflectionMethod::IS_PUBLIC);
+            $configuration = $this->container->get($configurationClass->getName());
+            foreach ($methods as $method) {
+                $attributes = $method->getAttributes(Component::class, ReflectionAttribute::IS_INSTANCEOF);
+                $componentAttribute = !empty($attributes) ? $attributes[0] : null;
+                if (isset($componentAttribute)) {
+                    /** @var Component $attribute */
+                    $attribute = $componentAttribute->newInstance();
+                    $componentName = $method->getReturnType()->getName();
+                    $this->registerServiceWithScope(
+                        $componentName,
+                        $attribute->scope,
+                        fn() => $configuration->{$method->getName()}()
+                    );
+                }
+            }
+        }
+
     }
 }

@@ -3,10 +3,10 @@
 namespace ReactorX\Examples;
 
 use ReactorX\Attributes\{Controller, HttpDelete, HttpGet, HttpPost, HttpPut};
-use Psr\Container\ContainerInterface;
-use ReactorX\Examples\Services\FooService;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
+use ReactorX\Examples\Services\ConfigurationInterface;
+use ReactorX\Examples\Services\PasswordHasherInterface;
 
 /**
  * Classes annotated with <code>#[Controller]</code> are picked up by the class scanner, added in the service container and configured as controllers
@@ -21,16 +21,23 @@ final readonly class HomeController
 
     #[HttpGet]
     public final function getList(
-        ContainerInterface     $container,
-        FooService             $fooService,
-        ServerRequestInterface $request
+        ConfigurationInterface  $config,
+        ServerRequestInterface  $request,
+        PasswordHasherInterface $passwordHasher
     ): Response
     {
         $queryParams = $request->getQueryParams();
         return new Response(
             200,
             ['Content-Type' => 'application/json'],
-            json_encode($fooService->bar()),
+            json_encode([
+                'singleton_configuration_test' => [$config->getConfiguration()],
+                'configuration_di_test' => [
+                    'instance' => var_export($passwordHasher, true),
+                    'hash' => $passwordHasher->hash("test"),
+                    'isValid' => $passwordHasher->verify('1234', 'test')
+                ]
+            ]),
         );
     }
 
