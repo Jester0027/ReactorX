@@ -6,7 +6,9 @@ use ReactorX\Attributes\Component;
 use ReactorX\Attributes\Configuration;
 use ReactorX\Attributes\Controller;
 use ReactorX\Attributes\Route;
+use ReactorX\Attributes\Service;
 use ReactorX\DependencyInjection\Container;
+use ReactorX\DependencyInjection\Scope;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
@@ -76,6 +78,7 @@ final class ComponentScanner
             $attributes = $class->getAttributes(Component::class, ReflectionAttribute::IS_INSTANCEOF);
             foreach ($attributes as $attribute) {
                 switch ($attribute->getName()) {
+                    case Service::class:
                     case Component::class:
                         $this->registerComponent($class, $attribute);
                         break;
@@ -160,7 +163,7 @@ final class ComponentScanner
                 $this->container->transient($serviceName, fn(Container $container) => $container->createInstance($serviceName));
                 break;
             default:
-                throw new \RuntimeException("Invalid scope '{$scope}' for service '{$serviceName}'.");
+                throw new \RuntimeException("Invalid scope '{$scope->value}' for service '{$serviceName}'.");
         }
     }
 }

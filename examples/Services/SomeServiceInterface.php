@@ -4,7 +4,7 @@ namespace ReactorX\Examples\Services;
 
 interface SomeServiceInterface
 {
-    function doStuff(): string;
+    public function doStuff(): string;
 }
 
 final class SomeService implements SomeServiceInterface

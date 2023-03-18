@@ -1,17 +1,12 @@
 <?php
 
-namespace ReactorX;
+namespace ReactorX\DependencyInjection;
 
 /**
  * Enumeration of component scopes
  */
 enum Scope: string
 {
-    /**
-     * Instantiated once at the application startup<br>
-     * Only used for configuration
-     */
-    case Startup = "STARTUP";
     /**
      * Instantiated once through the application lifetime
      */

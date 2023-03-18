@@ -2,7 +2,7 @@
 
 namespace ReactorX\Attributes;
 
-use ReactorX\Scope;
+use ReactorX\DependencyInjection\Scope;
 
 /**
  * Adds the annotated class/method return value to the DI container with the specified scope

@@ -2,7 +2,7 @@
 
 namespace ReactorX\Attributes;
 
-use ReactorX\Scope;
+use ReactorX\DependencyInjection\Scope;
 
 /**
  * Declares a class as a controller with a request scoped lifetime in the DI container

@@ -5,6 +5,7 @@ namespace ReactorX;
 use Closure;
 use DI\DependencyException;
 use DI\NotFoundException;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
@@ -12,7 +13,6 @@ use React\Http\HttpServer;
 use React\Http\Message\Response;
 use React\Socket\SocketServer;
 use ReactorX\DependencyInjection\Container;
-use ReactorX\DependencyInjection\RequestContainer;
 use ReflectionMethod;
 
 /**
@@ -91,7 +91,7 @@ class HttpKernel
             try {
                 $parameters[] = match ($type) {
                     ServerRequestInterface::class => $request,
-                    Container::class => $container,
+                    ContainerInterface::class => $container,
                     default => $container->get($type),
                 };
             } catch (DependencyException|NotFoundException $e) {

@@ -136,7 +136,7 @@ class Container implements ContainerInterface
      */
     public function resetRequestServices(): void
     {
-        $this->requestServices = [];
+        unset($this->requestServices);
     }
 
     /**

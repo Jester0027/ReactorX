@@ -2,10 +2,10 @@
 
 namespace ReactorX\Examples\Configuration;
 
-use ReactorX\Examples\Services\SomeService;
-use ReactorX\Examples\Services\SomeServiceInterface;
 use ReactorX\Attributes\Component;
 use ReactorX\Attributes\Configuration;
+use ReactorX\DependencyInjection\Scope;
+use ReactorX\Examples\Services\SomeServiceInterface;
 
 /**
  * This class is instantiated once during startup and is used for configuration.<br>
@@ -32,9 +32,14 @@ final class ApplicationConfig
      * }
      * </code>
      */
-    #[Component]
+    #[Component(Scope::Transient)]
     public function configureSomeService(): SomeServiceInterface
     {
-        return new SomeService();
+        return new class implements SomeServiceInterface {
+            public function doStuff(): string
+            {
+                return 'Foo Bar';
+            }
+        };
     }
 }

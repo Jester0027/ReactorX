@@ -2,7 +2,7 @@
 
 namespace ReactorX\Attributes;
 
-use ReactorX\Scope;
+use ReactorX\DependencyInjection\Scope;
 
 /**
  * attribute for components instantiated at application startup, mainly responsible for configuration

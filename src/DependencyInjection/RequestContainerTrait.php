@@ -7,6 +7,11 @@ namespace ReactorX\DependencyInjection;
  */
 trait RequestContainerTrait
 {
+    /**
+     * Returns a new instance of the current container with no request scoped services
+     *
+     * @return Container
+     */
     public function newRequestScopedContainer(): Container
     {
         return new class($this) extends Container {
@@ -16,7 +21,12 @@ trait RequestContainerTrait
                 $this->requestDefinitions = &$container->requestDefinitions;
                 $this->transientDefinitions = &$container->transientDefinitions;
                 $this->singletons = &$container->singletons;
-                $this->requestServices = [];
+                $this->resetRequestServices();
+            }
+
+            public function __destruct()
+            {
+                $this->resetRequestServices();
             }
         };
     }
